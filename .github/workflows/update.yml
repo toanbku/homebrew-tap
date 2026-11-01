@@ -1,0 +1,35 @@
+name: Update fMess
+
+# Keeps Casks/fmess.rb on fMess's latest release: its version and the
+# checksums of its two Mac disk images.
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          version=$(gh api repos/toanbku/fmess/releases/latest --jq .tag_name)
+          version=${version#v}
+          current=$(sed -n 's/^  version "\(.*\)"$/\1/p' Casks/fmess.rb)
+          [ "$version" = "$current" ] && { echo "Already $version"; exit 0; }
+          sum() { curl -fsSL "https://github.com/toanbku/fmess/releases/download/v$version/fMess_${version}_$1.dmg" | sha256sum | cut -d' ' -f1; }
+          arm=$(sum aarch64)
+          intel=$(sum x64)
+          sed -i -e "s/^  version \".*\"$/  version \"$version\"/" \
+                 -e "s/arm:   \"[0-9a-f]*\"/arm:   \"$arm\"/" \
+                 -e "s/intel: \"[0-9a-f]*\"/intel: \"$intel\"/" Casks/fmess.rb
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "fmess $version"
+          git push
