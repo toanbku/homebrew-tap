@@ -1,9 +1,9 @@
 cask "fmess" do
   arch arm: "aarch64", intel: "x64"
 
-  version "0.1.26"
-  sha256 arm:   "52d59bffa18297b0f3585c4b3224f2dcf89ce50a9a44caf0915afbd37c1381c2",
-         intel: "ba602a2feaca2f7493a1e23f1f40268508ffc35172a33835b903eff38fcd7b70"
+  version "0.1.28"
+  sha256 arm:   "ffa045781a8f0e9e480012352ab22f4b2425e2fdbfa11b7ca6b855fb472a58a2",
+         intel: "0978a6276a3db2ed334d147a7cc38cb60265b576aca9249051a3e5beedc430fe"
 
   url "https://github.com/toanbku/fmess/releases/download/v#{version}/fMess_#{version}_#{arch}.dmg"
   name "fMess"
